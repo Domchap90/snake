@@ -1,3 +1,7 @@
+// document.addEventListener('DOMContentLoaded', (event) => {
+    
+// })
+
 
 class SnakeGame {
 
@@ -149,6 +153,8 @@ class Snake {
     direction = 'up';
     speed = 160;
     moving = false;
+    deltaY = 0;
+    deltaX = 0;
 
     constructor(game) {
 
@@ -168,24 +174,35 @@ class Snake {
         this.position = { x, y };
 
         const startCell = this.game.boardCells[y][x];
+        console.log(`x = ${x}, y = ${y}`)
         startCell.classList.add('snake');
 
         this.tail.push(startCell);
-
+        this.setDirection(this.direction);
     }
 
     /**
      * Move the snake
      */
     move() {
-
         // If this is the first move, make sure the game isn't paused
         if (!this.moving) {
             this.moving = true;
             this.game.controls.classList.remove('paused');
         }
-
         // Todo: add the snake moving logic here and check if the snake hits a wall, itself, or food
+        this.position.x += this.deltaX;
+        this.position.y += this.deltaY;
+
+        const head = this.game.boardCells[this.position.y][this.position.x];
+        this.tail.push(head);
+
+        if (this.tail.length > this.tailLength) {
+            const tailEndExtra = this.tail.shift();
+            tailEndExtra.classList.remove('snake');
+        } 
+        head.classList.add('snake');
+
 
         // Move another step in `this.speed` number of milliseconds
         this.movementTimer = setTimeout(() => { this.move(); }, this.speed);
@@ -197,7 +214,24 @@ class Snake {
      */
     setDirection(direction) {
 
-        // Todo: update the snake's direction here
+        switch(direction){
+            case('up'):
+                this.deltaY = -1;
+                this.deltaX = 0;
+                break;
+            case('right'):
+                this.deltaY = 0;
+                this.deltaX = 1;
+                break;
+            case('down'):
+                this.deltaY = 1;
+                this.deltaX = 0;
+                break;
+            case('left'):
+                this.deltaY = 0;
+                this.deltaX = -1;
+                break;
+        }
 
     }
 

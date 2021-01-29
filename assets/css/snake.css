@@ -42,7 +42,7 @@ div.col.snake {
 }
 
 div.col.food {
-    background: #000;
+    background: rgb(255, 0, 0);
 }
 
 div#gameOver {
