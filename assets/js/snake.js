@@ -113,6 +113,9 @@ class SnakeGame {
     restart() {
 
         this.snake.reset();
+        this.food.deleteFood(this.food.x, this.food.y);
+        this.score = 0;
+        this.scoreCounter.innerText = this.score;
         this.controls.classList.remove('game-over');
         this.board.classList.remove('game-over');
         this.play();
@@ -174,7 +177,7 @@ class Snake {
         this.position = { x, y };
 
         const startCell = this.game.boardCells[y][x];
-        console.log(`x = ${x}, y = ${y}`)
+        // console.log(`x = ${x}, y = ${y}`)
         startCell.classList.add('snake');
 
         this.tail.push(startCell);
@@ -194,6 +197,17 @@ class Snake {
         this.position.x += this.deltaX;
         this.position.y += this.deltaY;
 
+        if (this.checkPosition() === false)
+            return this.game.gameOver();
+
+        console.log(`food x position = ${this.game.food.x}, food y position ${this.game.food.y}`)
+        if (this.game.food.x === this.position.x && this.game.food.y === this.position.y) {
+            this.game.food.move();
+            this.tailLength++;
+            this.game.increaseScore(1);
+            this.game.food.deleteFood(this.position.x, this.position.y);
+            
+        }
         const head = this.game.boardCells[this.position.y][this.position.x];
         this.tail.push(head);
 
@@ -235,6 +249,13 @@ class Snake {
 
     }
 
+    checkPosition() {
+
+        if (this.position.x >= SnakeGame.NUM_COLS || this.position.x < 0 || this.position.y >= SnakeGame.NUM_ROWS || this.position.y < 0)
+            return false;
+
+    }
+
     /**
      * Pause the snake's movement
      */
@@ -265,7 +286,10 @@ class Snake {
 }
 
 class Food {
-
+    x;
+    y;
+    // foodCell;
+    
     constructor(game) {
 
         this.game = game;
@@ -278,7 +302,16 @@ class Food {
     move() {
 
         // Todo: write this
+        this.x = Math.floor(Math.random() * SnakeGame.NUM_COLS);
+        this.y = Math.floor(Math.random() * SnakeGame.NUM_ROWS);
 
+        const foodCell = this.game.boardCells[this.y][this.x];
+        foodCell.classList.add('food');
+    }
+
+    deleteFood(x, y) {
+        const foodCell = this.game.boardCells[y][x];
+        foodCell.classList.remove('food');
     }
 
 }
