@@ -138,18 +138,57 @@ class SnakeGame {
     async gameOver() {
 
         this.snake.pause();
-        registerScore();
+        
         this.controls.classList.remove('playing');
         this.controls.classList.add('game-over');
         this.board.classList.add('game-over');
+        this.registerScore();
+        // this.getHighScores();
 
     }
 
+    getHighScores() {
+        
+        const xhr = new XMLHttpRequest();
+        const url='https://snake.howbout.app/api/dominic/high-scores';
+        
+        xhr.open("GET", url);
+        xhr.onreadystatechange =  () => {
+    
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                let r = JSON.parse(xhr.responseText);
+                r.sort((a, b) => {
+                    return b['score'] - a['score'];
+                });
+                r = r.slice(0, 10);
+                let counter = 10;
+                for (let entry of r){
+                    console.log(`${counter}) name: ${entry['name']}, score: ${entry['score']}, date: ${getDate(entry['created_at'])}, time: ${getTime(entry['created_at'])}`)
+                    counter--;
+                }
+            }
+        };
+        xhr.send();
+        
+    }
+
     registerScore() {
-        const Http = new XMLHttpRequest();
-        const url='https://snake.howbout.app/api/high-scores/dominic';
-        Http.open("POST", url);
-        Http.send();
+        const xhr = new XMLHttpRequest();
+        const url='https://snake.howbout.app/api/dominic/high-scores';
+        const data = {
+                        "name": "Dominic",
+                        "score": this.score
+                    }
+        xhr.open("POST", url);
+
+        xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+        xhr.onreadystatechange = () => {
+            if (xhr.readyState === 4 && xhr.status === 200 ) {
+                this.getHighScores();
+            }
+        };
+
+        xhr.send(JSON.stringify(data));        
     }
 
 }
@@ -330,4 +369,16 @@ class Food {
         foodCell.classList.remove('food');
     }
 
+}
+
+function getDate(isodate) {
+    // const regex = /[\d\d\d\d-\d\d-\d\d]/g;
+    const date = isodate.split('T')[0];
+    return date.split("-").reverse().join("/");
+}
+
+function getTime(isodate) {
+    const regex = /T\d\d:\d\d/g;
+    const time = isodate.match(regex).toString();
+    return time.substring(1);
 }
