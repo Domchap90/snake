@@ -138,11 +138,18 @@ class SnakeGame {
     async gameOver() {
 
         this.snake.pause();
-
+        registerScore();
         this.controls.classList.remove('playing');
         this.controls.classList.add('game-over');
         this.board.classList.add('game-over');
 
+    }
+
+    registerScore() {
+        const Http = new XMLHttpRequest();
+        const url='https://snake.howbout.app/api/high-scores/dominic';
+        Http.open("POST", url);
+        Http.send();
     }
 
 }
@@ -177,7 +184,6 @@ class Snake {
         this.position = { x, y };
 
         const startCell = this.game.boardCells[y][x];
-        // console.log(`x = ${x}, y = ${y}`)
         startCell.classList.add('snake');
 
         this.tail.push(startCell);
@@ -200,17 +206,27 @@ class Snake {
         if (this.checkPosition() === false)
             return this.game.gameOver();
 
-        console.log(`food x position = ${this.game.food.x}, food y position ${this.game.food.y}`)
+        // When snake head meets the same cell as food.
         if (this.game.food.x === this.position.x && this.game.food.y === this.position.y) {
             this.game.food.move();
             this.tailLength++;
+            if (this.speed > 4)
+                this.speed -= 5;
+            console.log('speed changed to '+this.speed)
             this.game.increaseScore(1);
             this.game.food.deleteFood(this.position.x, this.position.y);
             
         }
+
         const head = this.game.boardCells[this.position.y][this.position.x];
+
+        // When head meets the rest of the tail
+        if(head.classList.contains('snake')) 
+            return this.game.gameOver();
+
         this.tail.push(head);
 
+        // Maintain tail length as head advances 
         if (this.tail.length > this.tailLength) {
             const tailEndExtra = this.tail.shift();
             tailEndExtra.classList.remove('snake');
