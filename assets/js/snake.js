@@ -1,7 +1,12 @@
-// document.addEventListener('DOMContentLoaded', (event) => {
-    
-// })
+document.addEventListener('DOMContentLoaded', (event) => {
+    // const close = document.getElementById('close');
+    // close.addEventListener("click", hideModal);
+})
 
+function hideModal() {
+
+    document.querySelector('.modal-background').style.display = "none";
+}
 
 class SnakeGame {
 
@@ -143,8 +148,6 @@ class SnakeGame {
         this.controls.classList.add('game-over');
         this.board.classList.add('game-over');
         this.registerScore();
-        // this.getHighScores();
-
     }
 
     getHighScores() {
@@ -157,15 +160,28 @@ class SnakeGame {
     
             if (xhr.readyState === 4 && xhr.status === 200) {
                 let r = JSON.parse(xhr.responseText);
+
                 r.sort((a, b) => {
                     return b['score'] - a['score'];
                 });
                 r = r.slice(0, 10);
-                let counter = 10;
+
+                // Reset inner HTML before appending top 10 scores.
+                document.querySelector('#high-scores tbody').innerHTML = '';
+
+                // Initialize counter for ranks col.
+                let counter = 1;
+
                 for (let entry of r){
-                    console.log(`${counter}) name: ${entry['name']}, score: ${entry['score']}, date: ${getDate(entry['created_at'])}, time: ${getTime(entry['created_at'])}`)
-                    counter--;
+                    document.querySelector('#high-scores tbody').innerHTML += `<tr>
+                            <td>${counter}</td>
+                            <td>${entry['name']}</td>
+                            <td>${entry['score']}</td>
+                            <td>${getTime(entry['created_at'])} on ${getDate(entry['created_at'])}</td>
+                        </tr>`;
+                    counter++;
                 }
+                document.querySelector('.modal-background').style.display = "block";
             }
         };
         xhr.send();
@@ -184,13 +200,17 @@ class SnakeGame {
         xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
         xhr.onreadystatechange = () => {
             if (xhr.readyState === 4 && xhr.status === 200 ) {
-                this.getHighScores();
+                
             }
         };
 
         xhr.send(JSON.stringify(data));        
     }
 
+    // hideModal() {
+    //     console.log('hideModal entered.')
+    //     document.querySelector('.modal-background').style.display = "none";
+    // }
 }
 
 class Snake {

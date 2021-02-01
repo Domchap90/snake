@@ -6,23 +6,44 @@
     <script src="assets/js/snake.js"></script>
     <link rel="stylesheet" href="assets/css/snake.css">
 </head>
-<body>
-
+<body class="main-bg-color">
+<h1 class="main-title center-text">Snake</h1>
 <div id="controls">
-    <div>
-        <button class="play-button" onclick="game.play()">Play</button>
-        <button class="restart-button" onclick="game.restart()">Restart</button>
-        <button class="pause-button" onclick="game.snake.pause()">Pause</button>
-        <button class="resume-button" onclick="game.snake.move()">Resume</button>
+    <div class="center-text small-text">
+        <button class="play-button button" onclick="game.play()">Play</button>
+        <button class="restart-button button" onclick="game.restart()">Restart</button>
+        <button class="pause-button button" onclick="game.snake.pause()">Pause</button>
+        <button class="resume-button button" onclick="game.snake.move()">Resume</button>
     </div>
     <div>
-        <h2>Score: <span class="score">0</span></h2>
+        <h2 class="center-text small-text">Score: <span class="score">0</span></h2>
+    </div>
+    <div id="modal" class="modal-background">
+        <div class="modal-content">
+            <button class="button" onclick="hideModal()" id="close">
+                &#x2715 
+            </button>
+            <h2 class="modal-title center-text">LeaderBoard</h2>
+            <table id="high-scores" class="small-text">
+                <thead>
+                    <tr>
+                        <th>Rank</th>
+                        <th>Name</th>
+                        <th>Score</th>
+                        <th>Date</th> 
+                    </tr>   
+                </thead>
+                <tbody>
+                    
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 
 <div id="board">
     <div id="gameOver">
-        <h1>Game Over!</h1>
+        <h1 class="main-title">Game Over!</h1>
     </div>
 </div>
 
