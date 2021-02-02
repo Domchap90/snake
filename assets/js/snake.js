@@ -147,7 +147,8 @@ class SnakeGame {
         this.controls.classList.remove('playing');
         this.controls.classList.add('game-over');
         this.board.classList.add('game-over');
-        this.registerScore();
+        this.getPlayerName();
+        // this.registerScore();
     }
 
     getHighScores() {
@@ -186,6 +187,19 @@ class SnakeGame {
         };
         xhr.send();
         
+    }
+
+    getPlayerName() {
+        const playerName = document.querySelector('#player-name');
+        playerName.innerHTML = '';
+        playerName.innerHTML += `<p class="white-text small-text black-bg stack-above">
+            You scored ${this.score}. Register your name here:
+            </p>
+            <form>
+                <input class="input stack-above" placeholder="John Smith" name="name"/>
+                <button class="button small-text stack-above">Register Score</button>
+            </form>`;
+        // return name;
     }
 
     registerScore() {

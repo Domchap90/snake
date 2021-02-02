@@ -6,8 +6,16 @@ html, body {
     background-color: #59982f;
 }
 
+.black-bg {
+    background-color: #000;
+}
+
 .center-text {
     text-align: center;
+}
+
+.white-text {
+    color: #fff;
 }
 
 .main-title {
@@ -26,6 +34,8 @@ html, body {
     border-color: #fff;
     border-radius: 0.5rem;
     border-width: 1px;
+    font-size: 16px;
+    font-family: "Futura PT", sans-serif;
     color: #fff;
     cursor: pointer;
     justify-content: center;
@@ -92,6 +102,7 @@ div#gameOver {
     padding-top: 100px;
     box-sizing: border-box;
 }
+
 #board.game-over div#gameOver {
     display: block;
     background-color: #000;
@@ -103,8 +114,47 @@ div#gameOver {
 
 #board.game-over div.col.snake,
 #board.game-over div.col.food {
-    /* background-color: #fff; */
     filter: invert(1);
+    z-index: 0;
+}
+
+div#gameOver #player-name {
+    width: 300px;
+    margin-left: calc((100% - 300px)/2);
+    background-color: #000;
+}
+
+form > * {
+    margin-bottom: 16px;
+}
+
+.input {
+    align-items: center;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    box-shadow: none;
+    display: inline-flex;
+    font-size: 16px;
+    font-family: "Futura PT", sans-serif;
+    height: 1.2rem;
+    justify-content: flex-start;
+    line-height: 1.5;
+    padding-bottom: calc(0.5em - 1px);
+    padding-left: calc(0.75em - 1px);
+    padding-right: calc(0.75em - 1px);
+    padding-top: calc(0.5em - 1px);
+    position: relative;
+    vertical-align: top;
+}
+
+.input::placeholder {
+    font-family: "Futura PT", sans-serif;
+}
+
+.stack-above {
+    /* Elements cover snake and food */
+    position: relative;
+    z-index: 2;
 }
 
 /************************************** High Score Table */
