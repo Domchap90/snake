@@ -1,6 +1,5 @@
 document.addEventListener('DOMContentLoaded', (event) => {
-    // const close = document.getElementById('close');
-    // close.addEventListener("click", hideModal);
+    
 })
 
 function hideModal() {
@@ -168,13 +167,13 @@ class SnakeGame {
                 r = r.slice(0, 10);
 
                 // Reset inner HTML before appending top 10 scores.
-                document.querySelector('#high-scores tbody').innerHTML = '';
+                document.querySelector('#highScores tbody').innerHTML = '';
 
                 // Initialize counter for ranks col.
                 let counter = 1;
 
                 for (let entry of r){
-                    document.querySelector('#high-scores tbody').innerHTML += `<tr>
+                    document.querySelector('#highScores tbody').innerHTML += `<tr>
                             <td>${counter}</td>
                             <td>${entry['name']}</td>
                             <td>${entry['score']}</td>
@@ -192,21 +191,24 @@ class SnakeGame {
     getPlayerName() {
         const playerName = document.querySelector('#player-name');
         playerName.innerHTML = '';
+
         playerName.innerHTML += `<p class="white-text small-text black-bg stack-above">
-            You scored ${this.score}. Register your name here:
+            You scored ${this.score}. Register your score by entering your name here:
             </p>
             <form>
-                <input class="input stack-above" placeholder="John Smith" name="name"/>
-                <button class="button small-text stack-above">Register Score</button>
+                <input type="text" class="input stack-above" placeholder="John Smith" name="name" id="name" />
+                <button type="button" class="button small-text stack-above" id="registerScore">Register Score</button>
             </form>`;
-        // return name;
+        document.querySelector('#registerScore').addEventListener("click", () => this.registerScore(document.forms[0].name.value));
     }
 
-    registerScore() {
+    registerScore(playerName) {
+        // const name = document.querySelector('#name').value;
+        console.log(`name registered is ${playerName}.`)
         const xhr = new XMLHttpRequest();
         const url='https://snake.howbout.app/api/dominic/high-scores';
         const data = {
-                        "name": "Dominic",
+                        "name": playerName,
                         "score": this.score
                     }
         xhr.open("POST", url);
@@ -214,7 +216,7 @@ class SnakeGame {
         xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
         xhr.onreadystatechange = () => {
             if (xhr.readyState === 4 && xhr.status === 200 ) {
-                
+                this.getHighScores();
             }
         };
 
