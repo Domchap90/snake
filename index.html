@@ -9,21 +9,24 @@
 <body class="main-bg-color">
 <h1 class="main-title center-text">Snake</h1>
 <div id="controls">
+
     <div class="center-text small-text">
         <button class="play-button button" onclick="game.play()">Play</button>
         <button class="restart-button button" onclick="game.restart()">Restart</button>
         <button class="pause-button button" onclick="game.snake.pause()">Pause</button>
         <button class="resume-button button" onclick="game.snake.move()">Resume</button>
     </div>
+
     <div>
         <h2 class="center-text small-text">Score: <span class="score">0</span></h2>
     </div>
+
     <div id="modal" class="modal-background">
         <div class="modal-content">
-            <button class="button" onclick="hideModal()" id="close">
+            <button class="button" onclick="game.hideLeaderboard()" id="close">
                 &#x2715 
             </button>
-            <h2 class="modal-title center-text">LeaderBoard</h2>
+            <h2 class="modal-title center-text">Leaderboard</h2>
             <table id="highScores" class="small-text">
                 <thead>
                     <tr>
@@ -34,7 +37,6 @@
                     </tr>   
                 </thead>
                 <tbody>
-                    
                 </tbody>
             </table>
         </div>
@@ -44,7 +46,7 @@
 <div id="board">
     <div id="gameOver">
         <h1 class="main-title stack-above">Game Over!</h1>
-        <div id="player-name"></div>
+        <div id="playerName"></div>
     </div>
 </div>
 

@@ -88,7 +88,7 @@ div.col.snake {
 }
 
 div.col.food {
-    background: rgb(255, 0, 0);
+    background: #ff0000;
 }
 
 div#gameOver {
@@ -109,7 +109,7 @@ div#gameOver {
 }
 
 #board.game-over div#gameOver .main-title {
-    color: rgb(255, 0, 0);
+    color: #ff0000;
 }
 
 #board.game-over div.col.snake,
@@ -118,14 +118,16 @@ div#gameOver {
     z-index: 0;
 }
 
-div#gameOver #player-name {
+/************************************** Register Score Form */
+
+div#gameOver #playerName {
     width: 300px;
     margin-left: calc((100% - 300px)/2);
     background-color: #000;
 }
 
 form > * {
-    margin-bottom: 16px;
+    margin-top: 16px;
 }
 
 .input {
@@ -148,6 +150,12 @@ form > * {
 }
 
 .input::placeholder {
+    font-family: "Futura PT", sans-serif;
+}
+
+#error {
+    margin: 0px;
+    color: #ff0000;
     font-family: "Futura PT", sans-serif;
 }
 
@@ -179,8 +187,7 @@ form > * {
     top: 50%;
     transform: translate(-50%, -50%);
     padding: 45px;
-    /* pointer-events: none; */
-    transition: all 300ms ease-in-out;
+    /* transition: all 300ms ease-in-out; */
     z-index: 1001;
 }
 
@@ -203,6 +210,7 @@ form > * {
 
 .modal-title {
     text-align: center;
+    font-family: "Roboto", sans-serif;
 }
 
 #highScores {
@@ -211,7 +219,10 @@ form > * {
 
 th, td {
     text-align: center;
-    border: 1px solid black;
+}
+
+th {
+    padding-bottom: 8px;
 }
 
 

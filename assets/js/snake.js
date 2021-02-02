@@ -1,12 +1,3 @@
-document.addEventListener('DOMContentLoaded', (event) => {
-    
-})
-
-function hideModal() {
-
-    document.querySelector('.modal-background').style.display = "none";
-}
-
 class SnakeGame {
 
     static NUM_ROWS = 60;
@@ -111,17 +102,20 @@ class SnakeGame {
 
     }
 
-    /**
-     * Restart the game after game over
-     */
-    restart() {
-
+    reset() {
         this.snake.reset();
         this.food.deleteFood(this.food.x, this.food.y);
         this.score = 0;
         this.scoreCounter.innerText = this.score;
         this.controls.classList.remove('game-over');
         this.board.classList.remove('game-over');
+    }
+
+    /**
+     * Restart the game after game over
+     */
+    restart() {
+        this.reset();
         this.play();
 
     }
@@ -147,10 +141,15 @@ class SnakeGame {
         this.controls.classList.add('game-over');
         this.board.classList.add('game-over');
         this.getPlayerName();
-        // this.registerScore();
     }
 
-    getHighScores() {
+    scoresReady() {
+        return new Promise(s => {
+            this.getScores(s);
+        });
+    }
+
+    getScores(_callback) {
         
         const xhr = new XMLHttpRequest();
         const url='https://snake.howbout.app/api/dominic/high-scores';
@@ -159,37 +158,46 @@ class SnakeGame {
         xhr.onreadystatechange =  () => {
     
             if (xhr.readyState === 4 && xhr.status === 200) {
-                let r = JSON.parse(xhr.responseText);
+                _callback(JSON.parse(xhr.responseText));
+            } 
 
-                r.sort((a, b) => {
-                    return b['score'] - a['score'];
-                });
-                r = r.slice(0, 10);
-
-                // Reset inner HTML before appending top 10 scores.
-                document.querySelector('#highScores tbody').innerHTML = '';
-
-                // Initialize counter for ranks col.
-                let counter = 1;
-
-                for (let entry of r){
-                    document.querySelector('#highScores tbody').innerHTML += `<tr>
-                            <td>${counter}</td>
-                            <td>${entry['name']}</td>
-                            <td>${entry['score']}</td>
-                            <td>${getTime(entry['created_at'])} on ${getDate(entry['created_at'])}</td>
-                        </tr>`;
-                    counter++;
-                }
-                document.querySelector('.modal-background').style.display = "block";
-            }
         };
         xhr.send();
         
     }
 
+    async populateLeaderboard() {
+
+        let scores = await this.scoresReady();
+
+        scores.sort((a, b) => {
+            return b['score'] - a['score'];
+        });
+        scores = scores.slice(0, 10);
+
+        // Reset inner HTML before appending top 10 scores.
+        document.querySelector('#highScores tbody').innerHTML = '';
+
+        // Initialize counter for ranks col.
+        let counter = 1;
+
+        for (let entry of scores){
+            // Update table one row at a time
+            document.querySelector('#highScores tbody').innerHTML += `<tr>
+                    <td>${counter}</td>
+                    <td>${entry['name']}</td>
+                    <td>${entry['score']}</td>
+                    <td>${getTime(entry['created_at'])} on ${getDate(entry['created_at'])}</td>
+                </tr>`;
+            counter++;
+        }
+        document.querySelector('.modal-background').style.display = "block";
+    }
+
     getPlayerName() {
-        const playerName = document.querySelector('#player-name');
+        /* Asks user for name to register their score */
+
+        const playerName = document.querySelector('.game-over #playerName');
         playerName.innerHTML = '';
 
         playerName.innerHTML += `<p class="white-text small-text black-bg stack-above">
@@ -197,36 +205,55 @@ class SnakeGame {
             </p>
             <form>
                 <input type="text" class="input stack-above" placeholder="John Smith" name="name" id="name" />
+                <p id="error" class="stack-above"></p>
                 <button type="button" class="button small-text stack-above" id="registerScore">Register Score</button>
             </form>`;
-        document.querySelector('#registerScore').addEventListener("click", () => this.registerScore(document.forms[0].name.value));
+
+        document.querySelector('#registerScore').addEventListener("click", this.validateName);
+    }
+
+    validateName() {
+        /* called to ensure a name has been entered to register score */
+        
+        const nameEntered = document.forms[0].name.value;
+        const error = document.querySelector("#error");
+
+        if (nameEntered.length < 1) {
+            error.style.paddingTop = "8px";
+            error.textContent = "Name of scorer not entered!";
+        } else {
+            error.textContent = "";
+            game.registerScore(nameEntered);
+        }
     }
 
     registerScore(playerName) {
-        // const name = document.querySelector('#name').value;
-        console.log(`name registered is ${playerName}.`)
-        const xhr = new XMLHttpRequest();
-        const url='https://snake.howbout.app/api/dominic/high-scores';
-        const data = {
-                        "name": playerName,
-                        "score": this.score
-                    }
-        xhr.open("POST", url);
+        /* Posts score to API */
 
-        xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-        xhr.onreadystatechange = () => {
-            if (xhr.readyState === 4 && xhr.status === 200 ) {
-                this.getHighScores();
-            }
-        };
+        if (playerName.length > 0) {
+            const xhr = new XMLHttpRequest();
+            const url='https://snake.howbout.app/api/dominic/high-scores';
+            const data = {
+                            "name": playerName,
+                            "score": this.score
+                        }
+            xhr.open("POST", url);
 
-        xhr.send(JSON.stringify(data));        
+            xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+            xhr.onreadystatechange = () => {
+                if (xhr.readyState === 4 && xhr.status === 200 ) {
+                    this.populateLeaderboard();
+                }
+            };
+
+            xhr.send(JSON.stringify(data));
+        }       
     }
 
-    // hideModal() {
-    //     console.log('hideModal entered.')
-    //     document.querySelector('.modal-background').style.display = "none";
-    // }
+    hideLeaderboard() {
+        this.reset();
+        document.querySelector('.modal-background').style.display = "none";
+    }
 }
 
 class Snake {
@@ -287,7 +314,7 @@ class Snake {
             this.tailLength++;
             if (this.speed > 4)
                 this.speed -= 5;
-            console.log('speed changed to '+this.speed)
+
             this.game.increaseScore(1);
             this.game.food.deleteFood(this.position.x, this.position.y);
             
@@ -408,12 +435,15 @@ class Food {
 }
 
 function getDate(isodate) {
-    // const regex = /[\d\d\d\d-\d\d-\d\d]/g;
+    /* Extracts date from isodate format */
+
     const date = isodate.split('T')[0];
     return date.split("-").reverse().join("/");
 }
 
 function getTime(isodate) {
+    /* Extracts time from isodate format */
+
     const regex = /T\d\d:\d\d/g;
     const time = isodate.match(regex).toString();
     return time.substring(1);
